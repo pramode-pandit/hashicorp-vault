@@ -1,0 +1,16 @@
+{
+  "CN": "vault-internal",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "IN",
+      "L": "Kolkata",
+      "O": "Example Co.",
+      "OU": "IT",
+      "ST": "WB"
+    }
+  ]
+}

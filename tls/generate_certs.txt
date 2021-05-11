@@ -1,0 +1,70 @@
+cd .\hashicorp\vault\tls\
+
+
+#--- shell into a docker image of a debian container to work with the tls 
+docker run -it --rm -v ${PWD}:/work -w /work debian:buster bash
+
+
+#--- apt update and install cfssl binaries
+apt-get update && apt-get install -y curl
+curl https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -o /usr/bin/cfssl
+curl https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -o /usr/bin/cfssljson
+chmod +x /usr/bin/cfssl
+chmod +x /usr/bin/cfssljson
+
+
+#--- install cfssl with apt
+apt-get update && apt-get install -y curl
+apt install golang-cfssl -y
+
+
+#-- Review ca-csr.json and ca-config.json
+
+
+#-- Fic invalid character '\n'| '\r' in string literal
+#   Failed to parse input: unexpected end of JSON input
+#   root@861011d30896:/work# sed -i 's#\n$##g' *.json
+#   root@861011d30896:/work#
+#   root@861011d30896:/work# sed -i 's#\r$##g' *.json
+#   root@861011d30896:/work# 
+#   root@861011d30896:/work# sed -i '/^$/d' *.yaml
+
+
+#--- Create the certificate authority signing request configuration file.
+#    output: ca.csr, ca.pem, ca-key.pem
+
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+
+
+#--- Create the certificate authority signing requ
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname="vault-internal,vault-internal.vault.svc.cluster.local,vault-internal.vault.svc,localhost,127.0.0.1" \
+  -profile=default \
+  vault-csr.json | cfssljson -bare vault
+
+
+#--- get values to make a secret
+cat ca.pem | base64 | tr -d '\n'
+cat vault.pem | base64 | tr -d '\n'
+cat vault-key.pem | base64 | tr -d '\n'
+
+
+
+#--- Create secret with a yaml or apply directl with kubectl 
+#    cat << EOF | kubectl apply -f - 
+cat <<EOF > ./standalone/vault-tls-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vault-tls-secret
+  namespace: vault
+type: Opaque
+data:
+  vault.pem: $(cat vault.pem | base64 | tr -d '\n')
+  vault-key.pem: $(cat vault-key.pem | base64 | tr -d '\n') 
+  ca.pem: $(cat ca.pem | base64 | tr -d '\n')
+EOF
+
