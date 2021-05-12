@@ -1,5 +1,12 @@
 ### Vault Overview
 
+The project demonstrate deployment of vault in kubernetes environment and basic understanding of vault injector. We will cover
+
+- Deployment of standalone vault with helm
+- Deployment of standalone vault with tls security enabled
+- Creating a vault injector to intercept the pods create/update
+- Deploying example application to bind secret from vault during pod create/update
+
 Video Tutorials
 >https://learn.hashicorp.com/vault
 
