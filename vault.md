@@ -8,7 +8,9 @@ ca-config.json
 ca-csr.json
 vault-csr.json
 
-Follow the instaruction in generate_certs.txt to generate the certs
+Follow the instaruction in `generate_certs.txt` to generate the certs
+
+##### Creating vault deployment
 
 ```
 kubectl create ns vault
