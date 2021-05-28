@@ -66,9 +66,15 @@ Vault can be deployed into Kubernetes using the official HashiCorp Vault Helm ch
 - High-Availability (HA) : a cluster of Vault servers that use an HA storage backend such as Consul (default)
 - External : a Vault Agent Injector server that depends on an external Vault server
 
+
+### Install vault with Helm chart
+
+Documentation
 >https://www.vaultproject.io/docs/platform/k8s/helm/run
 
 The Vault Helm chart is the recommended way to install and configure Vault on Kubernetes. In addition to running Vault itself, the Helm chart is the primary method for installing and configuring Vault to integrate with other services such as Consul for High Availability (HA) deployments.
+
+This will install vault in standalone mode
 
 ```
 $ helm repo add hashicorp https://helm.releases.hashicorp.com
@@ -96,19 +102,8 @@ kubectl create ns hashicorp-vault
 helm install vault hashicorp/vault  --version 0.10.0 --namespace hashicorp-vault
 helm get all  vault --namespace hashicorp-vault > vault.txt
 ```
-    
-**Agent Sidecar Injector**
 
-Injector allows pods to automatically get secrets from the vault.
-
-The Vault Agent Injector alters pod specifications to include Vault Agent containers that render Vault secrets to a shared memory volume using Vault Agent Templates. 
-
-By rendering secrets to a shared volume, containers within the pod can consume Vault secrets without being Vault aware.
-
-The injector is a Kubernetes Mutation Webhook Controller. The controller intercepts pod events and applies mutations to the pod if annotations exist within the request. This functionality is provided by the vault-k8s project and can be automatically installed and configured using the Vault Helm chart.
-
-
-**Deploy vault server in standalone mode with yamls**
+### Install vault server in standalone mode with yamls
 
 A single Vault server persisting to a volume using the file storage backend
 
@@ -143,3 +138,23 @@ kubectl delete -f ./standalone/
 kubectl delete ns hashicorp-vault
 ```
 
+
+### Lets do more with vault
+
+> https://github.com/pramode-pandit/hashicorp-vault/blob/main/vault.md
+
+    - Installing with tls enabled for enhanced security
+    - Access Vault UI Dashboard
+    - Creating Vault Injector
+    - Setting up Kubernetes Auth Policy
+    - Secret Injection
+
+**Agent Sidecar Injector**
+
+Injector allows pods to automatically get secrets from the vault.
+
+The Vault Agent Injector alters pod specifications to include Vault Agent containers that render Vault secrets to a shared memory volume using Vault Agent Templates. 
+
+By rendering secrets to a shared volume, containers within the pod can consume Vault secrets without being Vault aware.
+
+The injector is a Kubernetes Mutation Webhook Controller. The controller intercepts pod events and applies mutations to the pod if annotations exist within the request. This functionality is provided by the vault-k8s project and can be automatically installed and configured using the Vault Helm chart.
