@@ -1,4 +1,4 @@
-cd .\hashicorp\vault\tls\
+cd .\hashicorp-vault\tls\
 
 
 #--- shell into a docker image of a debian container to work with the tls 
@@ -21,7 +21,7 @@ apt install golang-cfssl -y
 #-- Review ca-csr.json and ca-config.json
 
 
-#-- Fic invalid character '\n'| '\r' in string literal
+#-- Fix invalid character '\n'| '\r' in string literal
 #   Failed to parse input: unexpected end of JSON input
 #   root@861011d30896:/work# sed -i 's#\n$##g' *.json
 #   root@861011d30896:/work#
