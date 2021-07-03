@@ -168,9 +168,11 @@ kubectl delete ns hashicorp-vault
 ### Lets do more with vault
 
 - Installing vault with tls enabled for enhanced security
+
   https://github.com/pramode-pandit/hashicorp-vault/tree/main/tls
 
 - Creating Vault Injector and secret injection
+  
   https://github.com/pramode-pandit/hashicorp-vault/tree/main/injector
 
 
