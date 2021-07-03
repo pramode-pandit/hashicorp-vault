@@ -112,10 +112,36 @@ kubectl create ns hashicorp-vault
 kubectl apply -f .\standalone\
 ```
 
+
+**Init vault**
+
 In dev mode, vault is initialised by default, but in standalone and HA vault needs to be initialised and unsealed before it can be used.
 
 ```
 kubectl -n hashicorp-vault exec -it vault-0 -- vault operator init
+Unseal Key 1: Lb8NOzflB7P//m8T9ytQ55h7SjsmWKD2g5Duy6xeBAVD
+Unseal Key 2: ucrecsbW2PvLu+Npdh5UpsjfZTaNR2VdAfD6YcenFROI
+Unseal Key 3: oVfbRnHAbWRlR4LxlsAKdmFsbEDxsBExeDIA/K0ynUEZ
+Unseal Key 4: xYzqJi6yHevufVn9ADXZTZAYiO+jv8SQC+teaehJ8vZP
+Unseal Key 5: Ujy7hIzs+p2Vx/RHNaibeexCY0w0ldxZi//WKxUPVuUj
+
+Initial Root Token: s.xr2ep1s8s5KlObpfJux9XdVP
+
+Vault initialized with 5 key shares and a key threshold of 3. Please securely
+distribute the key shares printed above. When the Vault is re-sealed,
+restarted, or stopped, you must supply at least 3 of these keys to unseal it
+before it can start servicing requests.
+
+Vault does not store the generated master key. Without at least 3 key to
+reconstruct the master key, Vault will remain permanently sealed!
+
+It is possible to generate new unseal keys, provided you have a quorum of
+existing unseal keys shares. See "vault operator rekey" for more information.
+```
+
+**Check vault status**
+
+```
 kubectl -n hashicorp-vault exec -it vault-0 -- vault status
 ```
 
@@ -141,20 +167,10 @@ kubectl delete ns hashicorp-vault
 
 ### Lets do more with vault
 
-> https://github.com/pramode-pandit/hashicorp-vault/blob/main/vault.md
+- Installing vault with tls enabled for enhanced security
+  https://github.com/pramode-pandit/hashicorp-vault/tree/main/tls
 
-    - Installing with tls enabled for enhanced security
-    - Access Vault UI Dashboard
-    - Creating Vault Injector
-    - Setting up Kubernetes Auth Policy
-    - Secret Injection
+- Creating Vault Injector and secret injection
+  https://github.com/pramode-pandit/hashicorp-vault/tree/main/injector
 
-**Agent Sidecar Injector**
 
-Injector allows pods to automatically get secrets from the vault.
-
-The Vault Agent Injector alters pod specifications to include Vault Agent containers that render Vault secrets to a shared memory volume using Vault Agent Templates. 
-
-By rendering secrets to a shared volume, containers within the pod can consume Vault secrets without being Vault aware.
-
-The injector is a Kubernetes Mutation Webhook Controller. The controller intercepts pod events and applies mutations to the pod if annotations exist within the request. This functionality is provided by the vault-k8s project and can be automatically installed and configured using the Vault Helm chart.
